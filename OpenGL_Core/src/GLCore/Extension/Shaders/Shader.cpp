@@ -116,7 +116,7 @@ namespace GLCore::Extension::Shaders
 			int location = glGetUniformLocation(programID, name.c_str());
 			if (location == -1)
 			{ // location = -1 if the "name" uniform is never mentioned in main
-				LOG_ERROR("{0} doesn't exist! Program will run without uniform", name);
+				LOG_WARN("{0} doesn't exist! Program will run without uniform", name);
 			}
 			uniformLocations[name] = new int(location);
 		}

@@ -17,10 +17,7 @@ namespace GLCore
 		ImGuiLayer* imguiLayer;
 
 	public:
-		Application(const std::string& name = "GLFW Window",
-			uint32_t width = 1280,
-			uint32_t height = 720,
-			const glm::vec4& backgroundColor = glm::vec4(0.0, 0.0, 0.0, 1.0));
+		Application(const WindowProps& props);
 		virtual ~Application() = default;
 		virtual void init() = 0;
 		virtual void run();

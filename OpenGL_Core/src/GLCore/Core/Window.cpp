@@ -5,19 +5,6 @@
 
 namespace GLCore
 {
-	static void initViewPort(const int width, const int height)
-	{
-		glViewport(0, 0, width, height);
-	}
-	static void framebuffer_size_callback(GLFWwindow *window, int width, int height)
-	{
-		glViewport(0, 0, width, height);
-	}
-	static void glfw_error_callback(int error, const char *description)
-	{
-		fprintf(stderr, "Error : %s\n", description);
-	}
-
 	static void INIT_GLFW()
 	{
 		if (!glfwInit())
@@ -26,14 +13,12 @@ namespace GLCore
 		}
 
 		//Currently, we are using opengl 4.6
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); 
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #ifdef APPLE
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
-		glfwSetErrorCallback((GLFWerrorfun)glfw_error_callback);
-
 		LOG_INFO("GLFW initialized");
 	}
 	static void INIT_GLAD()
@@ -43,63 +28,67 @@ namespace GLCore
 			LOG_ERROR("Failed to initialize GLAD");
 		}
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_DEPTH_TEST);
-
 		LOG_INFO("GLAD initialized");
 	}
+	
+	//GLFW Callbacks
+	void Window::framebuffer_size_callback(GLFWwindow* window, int width, int height)
+	{
+		glViewport(0, 0, width, height);
+		Window::instance->props.dimensions.x = width;
+		Window::instance->props.dimensions.y = height;
+	}
+	void Window::window_pos_callback(GLFWwindow* window, int xpos, int ypos) {
+		Window::instance->props.position.x = xpos;
+		Window::instance->props.position.y = ypos;
+	}
+	void Window::glfw_error_callback(int error, const char* description)
+	{
+		fprintf(stderr, "Error : %s\n", description);
+	}
 
-	WindowProps::WindowProps(const std::string &name,
-							 uint32_t width,
-							 uint32_t height,
-							 const glm::vec4 &backgroundColor) : name(name),
-																 width(width),
-																 height(height),
-																 backgroundColor(backgroundColor){};
-	bool Window::enableVsync = true;
+	Window* Window::instance = nullptr;
 
-	Window::Window(const WindowProps &props) : props(props),
-											   GLFWWindow(nullptr) {}
+	Window::Window(const WindowProps& props){
+		
+		if (instance == nullptr) {
+			Window::instance = this;
+			this->props = props;
+
+			INIT_GLFW();
+			if (this->props.maximized) {
+				glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+			}
+			glfwSetErrorCallback(Window::glfw_error_callback);
+
+			GLFWWindow = glfwCreateWindow(this->props.getWidth(), this->props.getHeight(), this->props.name.c_str(), NULL, NULL);
+
+			if (GLFWWindow == NULL)
+			{
+				LOG_ERROR("Failed to create GLFW window");
+			}
+			glfwMakeContextCurrent(GLFWWindow);
+
+			if (this->props.enableVsync) {
+				glfwSwapInterval(1);
+			}
+
+			INIT_GLAD();
+
+			glViewport(0, 0, (int)this->props.dimensions.x, (int)this->props.dimensions.y);
+			glfwSetFramebufferSizeCallback(GLFWWindow, Window::framebuffer_size_callback);
+			glfwSetWindowPos(GLFWWindow, this->props.getPosX(), this->props.getPosY());
+			glfwSetWindowPosCallback(GLFWWindow, Window::window_pos_callback);
+		}
+		else {
+			LOG_ERROR("A Window instance already exists");
+		}
+	}
 
 	Window::~Window()
 	{
 		glfwDestroyWindow(GLFWWindow);
 		glfwTerminate();
-	}
-
-	void Window::init()
-	{
-		static bool firstWindowInstance = true;
-
-		//-------------------------------------------------------------
-		if (firstWindowInstance)
-		{
-			INIT_GLFW();
-		}
-		//-------------------------------------------------------------
-
-		GLFWWindow = glfwCreateWindow(props.width, props.height, props.name.c_str(), NULL, NULL);
-
-		if (GLFWWindow == NULL)
-		{
-			LOG_ERROR("Failed to create GLFW window");
-		}
-		glfwMakeContextCurrent(GLFWWindow);
-		
-		if (Window::isVsyncEnabled()) {
-			glfwSwapInterval(1);
-		}
-
-		INIT_GLAD();
-
-		initViewPort((int)props.width, (int)props.height);
-		glfwSetFramebufferSizeCallback(GLFWWindow, framebuffer_size_callback);
-
-		if (firstWindowInstance)
-		{
-			firstWindowInstance = false;
-		}
 	}
 
 	void Window::onUpdate()

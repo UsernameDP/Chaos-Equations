@@ -9,10 +9,7 @@ namespace GLCore
 
 	Application *Application::instance = nullptr;
 
-	Application::Application(const std::string &name,
-							 uint32_t width,
-							 uint32_t height,
-							 const glm::vec4 &backgroundColor)
+	Application::Application(const WindowProps& props)
 	{
 		if (instance == nullptr)
 		{
@@ -28,9 +25,7 @@ namespace GLCore
 
 		this->layers = std::make_unique<LayerStack>();
 
-		WindowProps props = WindowProps(name, width, height, backgroundColor);
 		this->window = std::make_unique<Window>(props);
-		this->window->init();
 
 		imguiLayer = new ImGuiLayer();
 		pushLayerFront(imguiLayer);

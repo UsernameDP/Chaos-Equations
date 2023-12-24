@@ -18,7 +18,7 @@ private:
 	std::vector<Particle> particles;
 
 	//Simulation Settings:
-	unsigned int numberOfParticles = 1000;
+	unsigned int numberOfParticles = 10000;
 	glm::vec3 center = glm::vec3(0, 0, 0);
 	float maxDisplacement = 0.1f; //displacement from center
 
@@ -27,6 +27,10 @@ private:
 		"    vec4 next = current;"
 		"    return next;"
 		"}\n";
+
+	//ImGui Flags
+	bool showImGui = true;
+	bool lastSPACE = false;
 
 	//Simulation Flags
 	bool start = false; //start - initGen() then nextGen()
@@ -85,7 +89,7 @@ private:
 		particles_GPU->unbind();
 		nextGen_shader->detach();
 
-		particles_GPU->readDataTo(&particles);
+		//particles_GPU->readDataTo(&particles);
 	}
 	void render() {
 
@@ -118,13 +122,40 @@ public:
 	}
 	virtual void onImguiUpdate(const GLCore::TimeStep &ts) override
 	{
-		//Displaying FPS
-		ImGui::Begin("Chaos Equations");
-		ImGui::Text("FPS %.2f" ,1 / ts.getDeltaSeconds());
+		if (Application::get().getKeyPressed(GLFW_KEY_SPACE) && 
+			Application::get().getKeyPressed(GLFW_KEY_SPACE) != lastSPACE && 
+			!Application::get().isImGuiFocused()) {
+			showImGui = !showImGui;
+		}
 
-		ImGui::Text("Width : %d", Application::get().getWindow().getWidth());
-		ImGui::Text("Height : %d", Application::get().getWindow().getHeight());
+		if (showImGui) {
+			//Displaying FPS
+			ImGui::SetNextWindowPos(ImVec2(
+				Application::get().getWindow().getProps().getPosX(),
+				Application::get().getWindow().getProps().getPosY()),
+				ImGuiCond_Always);
 
-		ImGui::End();
+			//FPS 
+			if (ImGui::Begin("FPS", &showImGui, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_AlwaysAutoResize)) {
+				ImGui::Text("FPS : %.2f", 1 / ts.getDeltaSeconds());
+			}
+			ImGui::End();
+
+			ImGui::SetNextWindowPos(ImVec2(
+				Application::get().getWindow().getProps().getPosX() + Application::get().getWindow().getProps().getWidth() - 350,
+				Application::get().getWindow().getProps().getPosY()),
+				ImGuiCond_Always);
+			ImGui::SetNextWindowSize(ImVec2(
+				350,
+				Application::get().getWindow().getProps().getHeight()),
+				ImGuiCond_Always);
+
+			if (ImGui::Begin("Settings", &showImGui, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize)) {
+
+			}
+			ImGui::End();
+		}
+
+		lastSPACE = Application::get().getKeyPressed(GLFW_KEY_SPACE);
 	}
 };

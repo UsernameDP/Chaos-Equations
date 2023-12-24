@@ -64,7 +64,7 @@ namespace GLCore
 	{
 		ImGuiIO &io = ImGui::GetIO();
 		Application &app = Application::get();
-		io.DisplaySize = ImVec2((float)app.getWindow().getWidth(), (float)app.getWindow().getHeight());
+		io.DisplaySize = ImVec2( (float)app.getWindow().getProps().getWidth() , (float)app.getWindow().getProps().getHeight());
 
 		// Rendering
 		ImGui::Render();
