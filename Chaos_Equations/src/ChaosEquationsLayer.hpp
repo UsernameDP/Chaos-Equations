@@ -18,14 +18,15 @@ private:
 	std::vector<Particle> particles;
 
 	//Simulation Settings:
-	unsigned int numberOfParticles = 10000;
+	int numberOfParticles = 1000;
 	glm::vec3 center = glm::vec3(0, 0, 0);
 	float maxDisplacement = 0.1f; //displacement from center
 
-	std::string nextGenFunctionDefinition =
+	static const size_t nextGenFunctionDefinition_Size = 10000;
+	char nextGenFunctionDefinition[nextGenFunctionDefinition_Size] =
 		"vec4 nextGen(vec4 current) {\n"
-		"    vec4 next = current;"
-		"    return next;"
+		"    vec4 next = current;\n"
+		"    return next;\n"
 		"}\n";
 
 	//ImGui Flags
@@ -33,7 +34,6 @@ private:
 	bool lastSPACE = false;
 
 	//Simulation Flags
-	bool start = false; //start - initGen() then nextGen()
 	bool stop = false; //stop - Temporarily stops running nextGen()
 
 	//OpenGL Objects
@@ -88,8 +88,6 @@ private:
 
 		particles_GPU->unbind();
 		nextGen_shader->detach();
-
-		//particles_GPU->readDataTo(&particles);
 	}
 	void render() {
 
@@ -112,6 +110,7 @@ public:
 	}
 	virtual void onDetach() override
 	{
+
 	}
 	virtual void onUpdate(const GLCore::TimeStep &ts) override
 	{
@@ -122,6 +121,8 @@ public:
 	}
 	virtual void onImguiUpdate(const GLCore::TimeStep &ts) override
 	{
+		WindowProps props = Application::get().getWindow().getProps();
+
 		if (Application::get().getKeyPressed(GLFW_KEY_SPACE) && 
 			Application::get().getKeyPressed(GLFW_KEY_SPACE) != lastSPACE && 
 			!Application::get().isImGuiFocused()) {
@@ -131,8 +132,8 @@ public:
 		if (showImGui) {
 			//Displaying FPS
 			ImGui::SetNextWindowPos(ImVec2(
-				Application::get().getWindow().getProps().getPosX(),
-				Application::get().getWindow().getProps().getPosY()),
+				props.getPosX(),
+				props.getPosY()),
 				ImGuiCond_Always);
 
 			//FPS 
@@ -142,16 +143,44 @@ public:
 			ImGui::End();
 
 			ImGui::SetNextWindowPos(ImVec2(
-				Application::get().getWindow().getProps().getPosX() + Application::get().getWindow().getProps().getWidth() - 350,
-				Application::get().getWindow().getProps().getPosY()),
+				props.getPosX() + props.getWidth() * (1- 0.25),
+				props.getPosY()),
 				ImGuiCond_Always);
 			ImGui::SetNextWindowSize(ImVec2(
-				350,
-				Application::get().getWindow().getProps().getHeight()),
+				props.getWidth() * 0.25,
+				props.getHeight()),
 				ImGuiCond_Always);
+			if (ImGui::Begin("Chaos Equations", &showImGui, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse)) {
+				if (stop) {
+					if (ImGui::Button("Continue")) {
+						stop = false;
+					}
+				}
+				else {
+					if (ImGui::Button("Stop")) {
+						stop = true;
+					}
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Apply")) {
+				}
 
-			if (ImGui::Begin("Settings", &showImGui, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize)) {
-
+				ImGui::SeparatorText("Simulation Settings : ");
+			
+				if (ImGui::InputInt("Number of Particles", &numberOfParticles, 10, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
+					initGen(); //restart simulation
+				}
+				if (ImGui::InputFloat3("Center / Spawn Point", center.data.data, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+					initGen();
+				}
+				if (ImGui::InputFloat("Displacement from Center", &maxDisplacement, 0.01f, 0.1f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+					initGen();
+				}
+				
+				ImGui::Text("Define NextGen function for Chaos Equations");
+				ImGui::Text("Available variables & Constants : ");
+				ImGui::BulletText("dt - FLOAT time difference between each render in seconds");
+				ImGui::InputTextMultiline("##Define Next Generation", nextGenFunctionDefinition, nextGenFunctionDefinition_Size, ImVec2(ImGui::GetColumnWidth(), ImGui::GetContentRegionAvail().y - 50), ImGuiInputTextFlags_AllowTabInput);
 			}
 			ImGui::End();
 		}
