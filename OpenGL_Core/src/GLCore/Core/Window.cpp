@@ -1,6 +1,7 @@
 #include "pch.hpp"
 #include "GLCore/Core/Window.hpp"
 
+#include "Application.hpp"
 
 namespace GLCore
 {
@@ -56,6 +57,7 @@ namespace GLCore
 																 width(width),
 																 height(height),
 																 backgroundColor(backgroundColor){};
+	bool Window::enableVsync = true;
 
 	Window::Window(const WindowProps &props) : props(props),
 											   GLFWWindow(nullptr) {}
@@ -84,12 +86,15 @@ namespace GLCore
 			LOG_ERROR("Failed to create GLFW window");
 		}
 		glfwMakeContextCurrent(GLFWWindow);
-		glfwSwapInterval(1);
+		
+		if (Window::isVsyncEnabled()) {
+			glfwSwapInterval(1);
+		}
 
 		INIT_GLAD();
 
 		initViewPort((int)props.width, (int)props.height);
-		glfwSetFramebufferSizeCallback(GLFWWindow, (GLFWframebuffersizefun)framebuffer_size_callback);
+		glfwSetFramebufferSizeCallback(GLFWWindow, framebuffer_size_callback);
 
 		if (firstWindowInstance)
 		{

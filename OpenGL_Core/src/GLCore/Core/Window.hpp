@@ -21,6 +21,8 @@ namespace GLCore {
 	private:
 		WindowProps props; 
 		GLFWwindow* GLFWWindow;
+	private:
+		static bool enableVsync;
 	public:
 		Window(const WindowProps& props);
 		~Window();
@@ -35,5 +37,8 @@ namespace GLCore {
 		inline const std::string& getName() { return props.name; }
 		inline const uint32_t& getWidth() { return props.width; }
 		inline const uint32_t& getHeight() { return props.height; }
+	public:
+		inline static void disableVsync() { Window::enableVsync = false; }
+		inline static bool isVsyncEnabled() { return Window::enableVsync; }
 	};
 }

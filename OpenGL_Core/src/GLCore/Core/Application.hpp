@@ -32,7 +32,6 @@ namespace GLCore
 		inline Window& getWindow() { return *(this->window); }
 		bool getKeyPressed(uint16_t GLFW_KEY);
 		bool isImGuiFocused(ImGuiFocusedFlags flag = ImGuiFocusedFlags_AnyWindow);
-
 	public:
 		static inline Application& get() { return *Application::instance; }
 	};

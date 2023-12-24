@@ -1,0 +1,48 @@
+#version 430
+layout(local_size_x = 1) in;
+
+struct Particle {
+	vec4 pos;
+	vec4 color;
+	vec4 history[99]; 
+};
+
+
+layout(std430, binding = 0) buffer ParticlesBuffer {
+	Particle[] particles;
+};
+
+uniform vec3 center;
+uniform float maxDisplacement;
+
+float random (vec2 st) { //psuedo random
+    return fract(sin(dot(st.xy,
+                         vec2(12.9898,78.233)))*
+        43758.5453123);
+}
+vec3 randomColor(vec2 st) {
+    return vec3(fract(sin(dot(st, vec2(12.9898, 78.233))) * 43758.5453),
+                fract(sin(dot(st, vec2(21.345, 67.567))) * 87658.231),
+                fract(sin(dot(st, vec2(45.678, 93.123))) * 76545.987));
+}
+
+void main() {
+	/*
+	OPTIONS : 
+	- if you dislike same uniform values giving same points, you can use uTime
+	- if you don't like all (x,y,z) values being the same, then find an alternative
+	*/
+	uint index = gl_GlobalInvocationID.x;
+
+	vec2 randInput = vec2(center.x, center.y) + maxDisplacement * index;
+	float randVal = random(randInput);
+	float randValAbs = abs(randVal);
+
+	particles[index].pos = vec4(center + randVal * maxDisplacement, 0.0);
+	particles[index].color = vec4(randomColor(randInput), 0.0);
+	
+	for(int i = 0; i < particles[index].history.length() ; i++){
+		particles[index].history[i] = particles[index].pos;
+	}
+
+}

@@ -2,6 +2,8 @@
 #include "ComputeShader.hpp"
 
 namespace GLCore::Extension::Shaders {
+	ComputeShader::ComputeShader(const std::string& name) : 
+		Shader(name) {}
 
 	ComputeShader::ComputeShader(const std::string& name, const std::string& computePath)
 		: Shader(name) {

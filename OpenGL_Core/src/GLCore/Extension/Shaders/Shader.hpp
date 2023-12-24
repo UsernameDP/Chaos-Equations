@@ -41,11 +41,18 @@ namespace GLCore::Extension::Shaders {
 		//The order you upload uniforms MATTER!! Make sure to upload .vert uniforms BEFORE .frag!!
 		const int& getUniformLocation(const std::string& name);
 
+		//Floats
 		void uploadFloat(const std::string& name, const float& value);
 		void uploadMat4f(const std::string& name, const glm::mat4& value);
+		void uploadVec2f(const std::string& name, const glm::vec2& value);
+		void uploadVec3f(const std::string& name, const glm::vec3& value);
+		void uploadVec4f(const std::string& name, const glm::vec4& value);
 
+
+		// Ints
 		void uploadInt(const std::string& name, const int& value);
 		void uploadTexture(const std::string& name, const unsigned int& slot);
+		void uploadUnsignedInt(const std::string& name, const unsigned int& value);
 
 	};
 }

@@ -1,0 +1,33 @@
+#version 430
+layout(local_size_x = 1) in;
+
+struct Particle {
+	vec4 pos;
+	vec4 color;
+	vec4 history[99]; 
+};
+
+layout(std430, binding = 0) buffer ParticlesBuffer {
+	Particle[] particles;
+};
+
+uniform float dt;
+
+${nextGenFunction}
+
+
+void main(){
+	uint index = gl_GlobalInvocationID.x;
+	vec4 prevPos = particles[index].pos;
+	vec4 newPos = nextGen(prevPos);
+
+	int historyLength = particles[index].history.length();
+
+	//shift history down
+	for(int i = 0 ; i < historyLength - 1; i++){
+		particles[index].history[i] = particles[index].history[i + 1]; 
+	}
+	
+	particles[index].history[historyLength - 1] = prevPos;
+	particles[index].pos = newPos;
+}

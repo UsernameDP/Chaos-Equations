@@ -133,14 +133,27 @@ namespace GLCore::Extension::Shaders
 	{
 		glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, &value[0][0]);
 	}
+	void Shader::uploadVec2f(const std::string& name, const glm::vec2& value) {
+		glUniform2f(getUniformLocation(name), value.x, value.y);
+	}
+	void Shader::uploadVec3f(const std::string& name, const glm::vec3& value) {
+		glUniform3f(getUniformLocation(name), value.x, value.y, value.z);
+	}
+	void Shader::uploadVec4f(const std::string& name, const glm::vec4& value) {
+		glUniform4f(getUniformLocation(name), value.r, value.g, value.b, value.a);
+	}
 
-	// ints
+	// Ints
 	void Shader::uploadInt(const std::string &name, const int &value)
 	{
 		glUniform1i(getUniformLocation(name), value);
 	}
-	void Shader::uploadTexture(const std::string &name, const unsigned int &slot)
+	void Shader::uploadTexture(const std::string& name, const unsigned int& slot)
 	{
 		glUniform1i(getUniformLocation(name), slot);
+	}
+	void Shader::uploadUnsignedInt(const std::string& name, const unsigned int& value)
+	{
+		glUniform1ui(getUniformLocation(name), value);
 	}
 }
