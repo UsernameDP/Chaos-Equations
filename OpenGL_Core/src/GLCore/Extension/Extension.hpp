@@ -1,5 +1,8 @@
 #pragma once
 
+//Cameras
+#include "Cameras/PerspectiveCamera.hpp"
+
 //Primitives
 #include "Primitives/EBO.hpp"
 #include "Primitives/VBO.hpp"

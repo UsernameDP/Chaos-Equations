@@ -46,6 +46,10 @@ namespace GLCore
 	{
 		fprintf(stderr, "Error : %s\n", description);
 	}
+	void Window::scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+		Window::instance->props.scroll.x += xoffset;
+		Window::instance->props.scroll.y += yoffset;
+	}
 
 	Window* Window::instance = nullptr;
 
@@ -79,6 +83,7 @@ namespace GLCore
 			glfwSetFramebufferSizeCallback(GLFWWindow, Window::framebuffer_size_callback);
 			glfwSetWindowPos(GLFWWindow, this->props.getPosX(), this->props.getPosY());
 			glfwSetWindowPosCallback(GLFWWindow, Window::window_pos_callback);
+			glfwSetScrollCallback(GLFWWindow, Window::scroll_callback);
 		}
 		else {
 			LOG_ERROR("A Window instance already exists");

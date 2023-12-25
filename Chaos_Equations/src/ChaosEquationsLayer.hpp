@@ -31,6 +31,7 @@ private:
 
 	//ImGui Flags
 	bool showImGui = true;
+	bool currentSPACE = false;
 	bool lastSPACE = false;
 
 	//Simulation Flags
@@ -122,10 +123,11 @@ public:
 	virtual void onImguiUpdate(const GLCore::TimeStep &ts) override
 	{
 		WindowProps props = Application::get().getWindow().getProps();
+		currentSPACE = props.getKeyPressed(GLFW_KEY_SPACE);
 
-		if (Application::get().getKeyPressed(GLFW_KEY_SPACE) && 
-			Application::get().getKeyPressed(GLFW_KEY_SPACE) != lastSPACE && 
-			!Application::get().isImGuiFocused()) {
+		if (currentSPACE && 
+			currentSPACE != lastSPACE &&
+			!ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow)) {
 			showImGui = !showImGui;
 		}
 
@@ -185,6 +187,6 @@ public:
 			ImGui::End();
 		}
 
-		lastSPACE = Application::get().getKeyPressed(GLFW_KEY_SPACE);
+		lastSPACE = currentSPACE;
 	}
 };

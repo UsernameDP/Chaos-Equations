@@ -43,4 +43,4 @@ namespace GLCore {
         glDebugMessageCallback(openGLDebugCallBack, nullptr);
     }
 
-} // namespace GLCore
+}

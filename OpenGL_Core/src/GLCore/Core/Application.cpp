@@ -55,13 +55,13 @@ namespace GLCore
 			timeStep.setTime(currentTime);
 			window->onUpdate();
 
-			for (Layer *layer : *layers)
+			for (Layer* layer : *layers)
 			{
 				layer->onUpdate(timeStep);
 			}
 
 			imguiLayer->begin();
-			for (Layer *layer : *layers)
+			for (Layer* layer : *layers)
 			{
 				layer->onImguiUpdate(timeStep);
 			}
@@ -69,14 +69,5 @@ namespace GLCore
 
 			glfwSwapBuffers(window->getGLFWWindow());
 		}
-	}
-
-	bool Application::getKeyPressed(uint16_t GLFW_KEY)
-	{
-		return ImGui::GetIO().KeysDown[GLFW_KEY];
-	}
-	bool Application::isImGuiFocused(ImGuiFocusedFlags flag)
-	{
-		return ImGui::IsWindowFocused(flag);
 	}
 }

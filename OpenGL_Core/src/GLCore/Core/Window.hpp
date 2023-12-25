@@ -28,5 +28,6 @@ namespace GLCore {
 		static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 		static void window_pos_callback(GLFWwindow* window, int xpos, int ypos);
 		static void glfw_error_callback(int error, const char* description);
+		static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 	};
 }
