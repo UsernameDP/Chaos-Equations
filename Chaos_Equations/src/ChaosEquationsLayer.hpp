@@ -39,7 +39,7 @@ private:
 	//Simulation Settings:
 	int numberOfParticles = 100;
 	glm::vec3 center = glm::vec3(0, 0, 0);
-	float maxDisplacement = 0.2f; //displacement from center
+	float maxDisplacement = 0.01f; //displacement from center
 
 	static const size_t nextGenFunctionDefinition_Size = 10000;
 	char nextGenFunctionDefinition[nextGenFunctionDefinition_Size] =
@@ -102,7 +102,7 @@ private:
 
 		/*Camera*/
 		Extension::Cameras::PerspectiveCameraProps cameraProps(
-			100.0f,
+			5.0f,
 			90.0f,
 			0.0f,
 			center,
