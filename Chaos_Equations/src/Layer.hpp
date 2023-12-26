@@ -1,10 +1,11 @@
 #pragma once
 #include "GLCore/Core/Core.hpp"
 #include "GLCore/Extension/Extension.hpp"
-
-#include <stack>
-
 using namespace GLCore;
+
+#include "Settings.hpp"
+#include "GUI.hpp"
+#include "Simulator/Simulator.hpp"
 
 class ChaosEquationsLayer : public Layer
 {
@@ -157,7 +158,7 @@ private:
 
 	//GLCore::Layer Methods
 public:
-	ChaosEquationsLayer() : Layer("ChaosEquationsLayer")
+	ChaosEquationsLayer() : Layer("ChaosEquations")
 	{
 
 	}

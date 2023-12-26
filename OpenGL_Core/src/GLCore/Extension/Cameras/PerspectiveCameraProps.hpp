@@ -97,5 +97,8 @@ namespace GLCore::Extension::Cameras {
 			this->ROTATE_RIGHT_KEY = ROTATE_RIGHT_KEY;
 		}
 
+		/*ROTATE_USING_CAMERA_TARGET*/
+		inline void setRadius(const float& radius) { this->radius = radius; }
+		inline void setCameraTarget(const glm::vec3& cameraTarget) { this->cameraTarget = cameraTarget; }
 	};
 }

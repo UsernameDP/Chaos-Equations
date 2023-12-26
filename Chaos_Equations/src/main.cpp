@@ -1,7 +1,7 @@
 #include <iostream>
 #include <GLCore/Core/Core.hpp>
 
-#include "ChaosEquationsLayer.hpp"
+#include "Layer.hpp"
 class ChaosEquationsApplication : public GLCore::Application {
 
 public:
