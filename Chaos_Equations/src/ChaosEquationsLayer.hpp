@@ -9,6 +9,25 @@ using namespace GLCore;
 class ChaosEquationsLayer : public Layer
 {
 private:
+	/*Axis*/
+	Extension::Shaders::Shader* axis_shader;
+	std::unique_ptr<Extension::Primitives::VAO> axis_VAO;
+	std::unique_ptr<Extension::Primitives::VBO> axis_VBO;
+	std::vector<float> axisVertices = {
+		//X Axis (Red)
+		0.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+
+		//Y Axis (Green)
+		0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+
+		//Z Axis (Blue)
+		0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f,
+	};
+
+	/*Particle*/
 	struct Particle {
 		glm::vec4 pos;
 		glm::vec4 color;
@@ -18,9 +37,9 @@ private:
 	std::vector<Particle> particles;
 
 	//Simulation Settings:
-	int numberOfParticles = 1000;
+	int numberOfParticles = 100;
 	glm::vec3 center = glm::vec3(0, 0, 0);
-	float maxDisplacement = 0.1f; //displacement from center
+	float maxDisplacement = 0.2f; //displacement from center
 
 	static const size_t nextGenFunctionDefinition_Size = 10000;
 	char nextGenFunctionDefinition[nextGenFunctionDefinition_Size] =
@@ -39,38 +58,39 @@ private:
 
 	//OpenGL Objects
 		//Computing
-	std::unique_ptr<Extension::Primitives::SSBO> particles_GPU = nullptr;
+	std::unique_ptr<Extension::Primitives::SSBO> particles_SSBO = nullptr;
 	std::unique_ptr<Extension::Shaders::ComputeShader> nextGen_shader = nullptr;
-
+		//Rendering
+	std::unique_ptr<Extension::Primitives::VBO> particles_VBO = nullptr;
+	std::unique_ptr<Extension::Primitives::VAO> particles_VAO = nullptr;
+	Extension::Shaders::Shader* particles_shader = nullptr;
+	
+	std::unique_ptr<Extension::Cameras::PerspectiveCamera> camera = nullptr;
 
 private:
 	//Chaos Equations Methods
 	void initGen() {
 		static bool firstCall = true;
-		if (!firstCall) {
-			particles_GPU->unbind();
-			particles_GPU->destroy();
 
-			//TODO : Set new numberOfParticles, center, and maxDeltaDisplacement unless the variables can be binded to imgui gui
-		}
-
-		//Fill the particles vector
+		/*InitGen*/
 		Extension::Shaders::ComputeShader* initGen_shader = &Extension::AssetPool::getComputeShader("InitGen");
 		particles = std::vector<Particle>(numberOfParticles);
 
-		particles_GPU = std::make_unique<Extension::Primitives::SSBO>(GL_STATIC_DRAW, &particles);
+		if (firstCall)
+			particles_SSBO = std::make_unique<Extension::Primitives::SSBO>(GL_STATIC_DRAW, &particles);
+		else
+			particles_SSBO->updateAndReallocateData(GL_STATIC_DRAW, &particles);
 		
 		initGen_shader->use();
-		particles_GPU->bindAt(0);
+		particles_SSBO->bindAt(0);
 		initGen_shader->uploadVec3f("center", center);
 		initGen_shader->uploadFloat("maxDisplacement", maxDisplacement);
 		initGen_shader->dispatch(glm::vec3(particles.size(), 1, 1), GL_SHADER_STORAGE_BARRIER_BIT);
 
-		particles_GPU->unbind();
+		particles_SSBO->unbind();
 		initGen_shader->detach();
-		particles_GPU->readDataTo(&particles);
 
-		//Set nextGen shader
+		/*Setup NextGen*/
 		std::string nextGen_GLSLSrc = std::string(Extension::AssetPool::getGLSL_SRC("nextGen.comp"));
 		size_t replacePos = nextGen_GLSLSrc.find("${nextGenFunction}");
 		nextGen_GLSLSrc.replace(replacePos, 19, nextGenFunctionDefinition);
@@ -80,18 +100,59 @@ private:
 			"nextGen.comp", nextGen_GLSLSrc));
 		nextGen_shader->compile();
 
+		/*Camera*/
+		Extension::Cameras::PerspectiveCameraProps cameraProps(
+			100.0f,
+			90.0f,
+			0.0f,
+			center,
+			glm::vec3(0.0f, 1.0f, 0.0f),
+			45.0f,
+			0.1f,
+			100.0f
+		);
+		cameraProps.enableRotateAboutTargetWithKeys();
+		cameraProps.enableFOVWithScroll();
+		camera = std::make_unique<Extension::Cameras::PerspectiveCamera>(cameraProps);
+
+		/*Particles*/
+		std::vector<unsigned int> particlesIndexVector(numberOfParticles);
+		for (unsigned int i = 0; i < particlesIndexVector.size(); i++)
+			particlesIndexVector[i] = i;
+
+		if (firstCall) {
+			particles_VAO = std::make_unique<Extension::Primitives::VAO>();
+			particles_VAO->bind();
+			particles_VBO = std::make_unique<Extension::Primitives::VBO>(GL_STATIC_DRAW, &particlesIndexVector);
+			particles_VAO->addVertexAttributeInt(0, 1, GL_UNSIGNED_INT, sizeof(unsigned int), (void*)0);
+			particles_VAO->disableAttributes();
+		}
+		else {
+			particles_VBO->updateAndReallocateData(GL_STATIC_DRAW, &particlesIndexVector);
+		}
+
+		if (firstCall)
+			firstCall = false;
 	}
 	void nextGen(const GLCore::TimeStep& ts) {
 		nextGen_shader->use();
 		nextGen_shader->uploadFloat("dt", ts.getDeltaSeconds());
-		particles_GPU->bindAt(0);
+		particles_SSBO->bindAt(0);
 		nextGen_shader->dispatch(glm::vec3(particles.size(), 1, 1), GL_SHADER_STORAGE_BARRIER_BIT);
 
-		particles_GPU->unbind();
+		particles_SSBO->unbind();
 		nextGen_shader->detach();
 	}
 	void render() {
+		particles_shader->use();
+		particles_shader->uploadMat4f("VP", camera->getViewProjection());
+		particles_SSBO->bindAt(0);
+		particles_VAO->bind();
 
+		glDrawArrays(GL_POINTS, 0, particles.size());
+
+		particles_shader->detach();
+		particles_VAO->unbind();
 	}
 
 	//GLCore::Layer Methods
@@ -107,6 +168,15 @@ public:
 
 	virtual void onAttach() override
 	{
+		/*Axis*/
+		axis_shader = &Extension::AssetPool::getShader("Axis");
+		axis_VAO = std::make_unique<Extension::Primitives::VAO>();
+		axis_VBO = std::make_unique<Extension::Primitives::VBO>(GL_DYNAMIC_DRAW, &axisVertices);
+		axis_VAO->addVertexAttributeFloat(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		axis_VAO->disableAttributes();
+
+		/*Particle*/
+		particles_shader = &Extension::AssetPool::getShader("Chaos");
 		initGen();
 	}
 	virtual void onDetach() override
@@ -115,6 +185,17 @@ public:
 	}
 	virtual void onUpdate(const GLCore::TimeStep &ts) override
 	{
+		camera->onUpdate(ts, Extension::Cameras::PerspectiveCameraOptions::ROTATE_USING_CAMERA_TARGET);
+
+		axis_shader->use();
+		axis_shader->uploadMat4f("VP", camera->getViewProjection());
+		axis_VAO->bind();
+
+		glDrawArrays(GL_LINES, 0, 6);
+
+		axis_VAO->unbind();
+		axis_shader->detach();
+
 		render();
 		if (!stop) { //render nextGen after so we can see gen 0
 			nextGen(ts);
@@ -165,6 +246,7 @@ public:
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("Apply")) {
+					initGen();
 				}
 
 				ImGui::SeparatorText("Simulation Settings : ");

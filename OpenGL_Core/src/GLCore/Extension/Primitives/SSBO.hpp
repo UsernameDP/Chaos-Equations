@@ -25,7 +25,15 @@ namespace GLCore::Extension::Primitives {
 
 		template<typename T>
 		void updateData(std::vector<T>* data) {
+			bind();
 			glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, data->size() * sizeof(T), data->data());
+			unbind();
+		}
+		template<typename T>
+		void updateAndReallocateData(const GLenum& DRAW_TYPE, std::vector<T>* data) {
+			bind();
+			glBufferData(GL_SHADER_STORAGE_BUFFER, data->size() * sizeof(T), data->data(), DRAW_TYPE);
+			unbind();
 		}
 
 		template<typename T>
