@@ -12,7 +12,7 @@ layout(std430, binding = 0) buffer ParticlesBuffer {
 	Particle[] particles;
 };
 
-uniform vec3 center;
+uniform vec3 spawnPoint;
 uniform float maxDisplacement;
 
 float map(float value, float min1, float max1, float min2, float max2) {
@@ -40,7 +40,7 @@ void main() {
 	*/
 	uint index = gl_GlobalInvocationID.x;
 
-	vec2 randInput = vec2(center.x, center.y) + maxDisplacement * index;
+	vec2 randInput = vec2(spawnPoint.x, spawnPoint.y) + maxDisplacement * index;
 	
 	vec3 randomPosOutput = randomPos(randInput);
 	randomPosOutput.x = map(randomPosOutput.x, 0.0, 1.0, -maxDisplacement, maxDisplacement);
