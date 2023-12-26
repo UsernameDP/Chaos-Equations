@@ -4,7 +4,7 @@ layout(local_size_x = 1) in;
 struct Particle {
 	vec4 pos;
 	vec4 color;
-	vec4 history[99]; 
+	vec4 history[249]; 
 };
 
 

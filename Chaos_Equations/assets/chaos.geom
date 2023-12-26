@@ -1,11 +1,11 @@
 #version 460 core
 layout (points) in;
-layout (line_strip, max_vertices = 100) out;
+layout (line_strip, max_vertices = 250) out;
 
 struct Particle {
 	vec4 pos;
 	vec4 color;
-	vec4 history[99]; 
+	vec4 history[249]; 
 };
 
 layout(std430 , binding = 0) buffer ParticlesBuffer {
@@ -28,7 +28,7 @@ void main() {
         float interpFactor = float(i) / float(particles[index].history.length() - 1);
         vec4 currentPos = particles[index].history[i];
         gl_Position = VP * currentPos;
-        fragColor = mix(vec4(0.0, 0.0, 0.0, 1.0), color, interpFactor); // Adjust the colors based on your preference
+        fragColor = mix(vec4(0.0, 0.0, 0.0, 1.0), color, interpFactor ); // Adjust the colors based on your preference
         EmitVertex();
     }
 

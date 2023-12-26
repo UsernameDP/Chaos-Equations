@@ -31,7 +31,7 @@ private:
 	struct Particle {
 		glm::vec4 pos;
 		glm::vec4 color;
-		glm::vec4 history[99]; //Trail size is essentilly 100 since pos counts
+		glm::vec4 history[249]; //Trail size is essentilly 100 since pos counts
 	};
 
 	std::vector<Particle> particles;
