@@ -49,6 +49,9 @@ public:
 
 	void nextGen(const TimeStep& ts) {
 		nextGen_shader->use();
+		nextGen_shader->uploadFloat("highestSpeed", settings->simulationSettings->higestSpeed);
+		nextGen_shader->uploadVec3f("lowestSpeedColor", settings->simulationSettings->lowestSpeedColor);
+		nextGen_shader->uploadVec3f("highestSpeedColor", settings->simulationSettings->highestSpeedColor);
 		nextGen_shader->uploadFloat("dt", ts.getDeltaSeconds());
 		simulatorSharedObjects->particles_SSBO->bindAt(0);
 		

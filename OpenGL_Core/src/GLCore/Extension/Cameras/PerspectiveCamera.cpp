@@ -69,6 +69,12 @@ namespace GLCore::Extension::Cameras {
 		props.targetPitch = glm::clamp(props.targetPitch, -89.9f, 89.9f);
 	}
 
+	void PerspectiveCamera::moveDeltaRadius(const float& deltaRadius) {
+		props.radius += deltaRadius;
+		if (props.radius < 0)
+			props.radius = 0;
+	}
+
 	void PerspectiveCamera::zoomDeltaFov(const float& changeSinceInitialFOV)
 	{
 		props.FOV = props.initFOV + changeSinceInitialFOV;
@@ -79,9 +85,11 @@ namespace GLCore::Extension::Cameras {
 	{
 		WindowProps& windowProps = Application::get().getWindow().getProps();
 
-		if (props.FOVWithScroll) {
-			float scrollY = windowProps.getScrollY();
-			zoomDeltaFov(-scrollY);
+		if (props.FOVWithScroll ) {
+			if (!ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow)) {
+				float scrollY = windowProps.getScrollY();
+				zoomDeltaFov(-scrollY);
+			}
 		}
 
 		if (rotate_option == ROTATE_USING_PITCH_YAW) {
@@ -139,7 +147,6 @@ namespace GLCore::Extension::Cameras {
 			props.view = glm::lookAt(props.cameraPos, props.cameraPos + props.cameraFront, props.cameraUp);
 		}
 		else {
-						
 			if (props.rotateAboutTargetWithKeys) {
 				float cameraSpeed = props.cameraRotateSpeedFactor * ts.getDeltaSeconds();
 				if (!ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow)) {
@@ -154,6 +161,18 @@ namespace GLCore::Extension::Cameras {
 					}
 					if (windowProps.getKeyPressed(props.ROTATE_ABOUT_CAMERA_TARGET_RIGHT_KEY)) {
 						rotateDeltaTargetYaw(-cameraSpeed);
+					}
+				}
+			}
+
+			if (props.moveRadiusWithKeys) {
+				float changeRadiusSpeed = props.cameraMovementSpeedFactor * ts.getDeltaSeconds();
+				if (!ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow)) {
+					if (windowProps.getKeyPressed(props.MOVE_RADIUS_INCREASE_KEY)) {
+						moveDeltaRadius(changeRadiusSpeed);
+					}
+					if (windowProps.getKeyPressed(props.MOVE_RADIUS_DECREASE_KEY)) {
+						moveDeltaRadius(-changeRadiusSpeed);
 					}
 				}
 			}

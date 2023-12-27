@@ -22,6 +22,7 @@ namespace GLCore::Extension::Cameras {
 
 		void rotateDeltaTargetYaw(const float& deltaAngle);
 		void rotateDeltaTargetPitch(const float& deltaAngle);
+		void moveDeltaRadius(const float& deltaRadius);
 
 		void zoomDeltaFov(const float& changeSinceInitialFOV);
 

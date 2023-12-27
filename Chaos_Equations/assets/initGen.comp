@@ -49,7 +49,7 @@ void main() {
 
 
 	particles[index].pos = vec4( randomPosOutput , 1.0);
-	particles[index].color = vec4(randomColor(randInput), 1.0);
+	//particles[index].color = vec4(randomColor(randInput), 1.0);
 	
 	for(int i = 0; i < particles[index].history.length() ; i++){
 		particles[index].history[i] = particles[index].pos;

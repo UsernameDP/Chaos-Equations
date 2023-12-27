@@ -20,7 +20,9 @@ namespace GLCore::Extension::Primitives {
 
 		template<typename T>
 		void updateData(std::vector<T>* data, const GLuint& offset_bytes = 0) {
+			bind();
 			glBufferSubData(GL_ARRAY_BUFFER, offset_bytes, data->size() * sizeof(T), data->data());
+			unbind();
 		}
 
 		template<typename T>

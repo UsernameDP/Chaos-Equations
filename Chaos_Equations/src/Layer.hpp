@@ -32,17 +32,19 @@ public:
 		settings = std::make_shared<Settings>();
 
 		Extension::Cameras::PerspectiveCameraProps cameraProps(
-			100.0f,
+			3.0f,
 			90.0f,
 			0.0f,
 			settings->simulationSettings->spawnPoint,
 			glm::vec3(0.0f, 1.0f, 0.0f),
 			45.0f,
 			0.1f,
-			100.0f
+			1000.0f
 		);
 		cameraProps.enableRotateAboutTargetWithKeys();
 		cameraProps.enableFOVWithScroll();
+		cameraProps.enableMoveRadiusWithKeys();
+		cameraProps.setCameraMovementSpeedFactor(10.0);
 		camera = std::make_shared<Extension::Cameras::PerspectiveCamera>(cameraProps);
 
 		gui = std::make_unique<GUI>(camera, settings);

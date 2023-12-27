@@ -46,6 +46,7 @@ namespace GLCore::Extension::Cameras {
 		bool FOVWithScroll = false;
 		bool rotateWithRightClick = false;
 		bool rotateWithKeys = false;
+		bool moveRadiusWithKeys = false;
 
 		uint16_t MOVE_FORWARD_KEY = GLFW_KEY_W;
 		uint16_t MOVE_BACKWARD_KEY = GLFW_KEY_S;
@@ -63,6 +64,9 @@ namespace GLCore::Extension::Cameras {
 		uint16_t ROTATE_ABOUT_CAMERA_TARGET_LEFT_KEY = GLFW_KEY_A;
 		uint16_t ROTATE_ABOUT_CAMERA_TARGET_RIGHT_KEY = GLFW_KEY_D;
 
+		uint16_t MOVE_RADIUS_INCREASE_KEY = GLFW_KEY_O;
+		uint16_t MOVE_RADIUS_DECREASE_KEY = GLFW_KEY_P;
+
 		PerspectiveCameraProps() = default;
 		PerspectiveCameraProps(const glm::vec3& cameraPos, const float& yaw, const float& pitch, const glm::vec3& cameraUp, const float& initFOV, const float& nearDist, const float& farDist);
 		PerspectiveCameraProps(const float& radius, const float& targetYaw, const float& targetPitch, const glm::vec3& cameraTarget, const glm::vec3& cameraUp, const float& initFOV, const float& nearDist, const float& farDist);
@@ -77,6 +81,7 @@ namespace GLCore::Extension::Cameras {
 		inline void enableRotateWithRightClick() { this->rotateWithRightClick = true; }
 		inline void enableFOVWithScroll() { this->FOVWithScroll = true; }
 		inline void enableRotateWithKeys() { this->rotateWithKeys = true; }
+		inline void enableMoveRadiusWithKeys() { this->moveRadiusWithKeys = true; }
 
 		inline void setRotateAboutCameraTargetKeys(uint16_t ROTATE_ABOUT_CAMERA_TARGET_UP_KEY, uint16_t ROTATE_ABOUT_CAMERA_TARGET_DOWN_KEY, uint16_t ROTATE_ABOUT_CAMERA_TARGET_LEFT_KEY, uint16_t ROTATE_ABOUT_CAMERA_TARGET_RIGHT_KEY) {
 			this->ROTATE_ABOUT_CAMERA_TARGET_UP_KEY = ROTATE_ABOUT_CAMERA_TARGET_UP_KEY;
@@ -96,9 +101,9 @@ namespace GLCore::Extension::Cameras {
 			this->ROTATE_LEFT_KEY = ROTATE_LEFT_KEY;
 			this->ROTATE_RIGHT_KEY = ROTATE_RIGHT_KEY;
 		}
-
-		/*ROTATE_USING_CAMERA_TARGET*/
-		inline void setRadius(const float& radius) { this->radius = radius; }
-		inline void setCameraTarget(const glm::vec3& cameraTarget) { this->cameraTarget = cameraTarget; }
+		inline void setMoveRadiusKey(uint16_t MOVE_RADIUS_INCREASE_KEY, uint16_t MOVE_RADIUS_DECREASE_KEY) {
+			this->MOVE_RADIUS_INCREASE_KEY = MOVE_RADIUS_INCREASE_KEY;
+			this->MOVE_RADIUS_DECREASE_KEY = MOVE_RADIUS_DECREASE_KEY;
+		}
 	};
 }

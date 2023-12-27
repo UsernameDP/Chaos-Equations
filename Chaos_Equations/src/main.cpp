@@ -16,6 +16,7 @@ public:
     virtual void init() override {
         Extension::AssetPool::setComputeShader(new Extension::Shaders::ComputeShader("InitGen", "initGen.comp"));
         Extension::AssetPool::setShader(new Extension::Shaders::VertexPipelineShader("Axis", "axis.vert", "axis.frag"));
+        Extension::AssetPool::setShader(new Extension::Shaders::VertexPipelineShader("CameraTarget", "cameraTarget.vert", "cameraTarget.frag"));
         Extension::AssetPool::setShader(new Extension::Shaders::VertexPipelineShader("Chaos", "chaos.vert", "chaos.geom", "chaos.frag"));
 
         pushLayer(new ChaosEquationsLayer());

@@ -11,6 +11,10 @@ layout(std430, binding = 0) buffer ParticlesBuffer {
 	Particle[] particles;
 };
 
+uniform float highestSpeed;
+uniform vec3 lowestSpeedColor;
+uniform vec3 highestSpeedColor;
+
 uniform float dt;
 
 ${nextGenFunction}
@@ -30,4 +34,11 @@ void main(){
 	
 	particles[index].history[historyLength - 1] = prevPos;
 	particles[index].pos = newPos;
+
+	//New Color
+	vec4 displacement = newPos - prevPos;
+	float distance = length(displacement);
+	float speed = distance / dt;
+	float interpfactor = speed / highestSpeed;
+	particles[index].color = vec4(mix(lowestSpeedColor, highestSpeedColor, interpfactor), 1.0);
 }
