@@ -185,6 +185,8 @@ namespace GLCore::Extension::Cameras {
 
 			props.view = glm::lookAt(props.cameraPos, props.cameraTarget, props.cameraUp);
 		}
+
+		
 		props.projection = glm::perspective(glm::radians(props.FOV), (float)windowProps.getWidth() / (float)windowProps.getHeight(), props.nearDist, props.farDist);
 
 		props.VP = props.projection * props.view;

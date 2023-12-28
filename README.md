@@ -1,98 +1,33 @@
-# Compiling
+# Build & Compile
 
-Build Options :
+> For all of the following installations, make sure to have [Cmake](https://cmake.org/download/) installed
 
-- Debug : Program is compiled with Debug Flags
-- Release : Program is compiled with Release Flags
+## Windows
 
-OS :
+### MSVC Compiler
 
-- Windows : Windows macro is inserted
-- Linux : Linux macro is inserted
+1. `git clone -b main https://github.com/UsernameDP/Chaos-Equations.git Chaos-Equations` - Clone the Repository.
+2. `cd Chaos-Equations` - open the Chaos Equations Directory.
+3. `cmake -S . -B build` - Build using the CMakeLists.txt files.
+4. `cmake --build build --config Release` - Compile using MSVC in the Release build.
+5. `cd build/Release/bin` - Enter the bin directory where all executables are located.
+6. `./Chaos_Equations.exe` - This will run the program / executable.
 
-Compilers :
+# Tutorial
 
-- MSVC : For Visual Studio work
-- g++ : For general purpose compiling
+## Hot Keys
 
-# Organization
+- **ESC** - To hide all GUIs
+- **W A S D** - to rotate about the _Camera Target_
 
-This framework for OpenGL is organized based on the directory underneath underneath the `/OpenGL-Core/src/...`. Such that `OpenGL-Core/src/[dir]` corresponds to the `GLCore::[dir]` namespace.
+## GUI
 
-Note that anything under `OpenGL-Core/src/` is accessible by default using `GLCore::[name]`
+### Particles
 
-# OpenGL-Core
+- **Number of Particles** - Number of particles you would like to spawn. Depending on your GPU, you will be able to spawn more or less.
+- **Spawn Point** - Where to spawn your particles.
+- **Displacement** - Defines the maximum distance in which your particles will spawn.
 
-## Core (Default)
+### Colors
 
-> All the methods & classes for using the basic framework.
-
-- **Application** : Bundles all the other classes in `GLCore::[name]` together. Anything to do with getting information about the status of the running application can be done here.
-- **Window** : The window class to display for different OS.
-- **LayerList** : An ArrayList containing all the `Layer`
-  - **Layer(Abstract)** : Every iteration / re-render of the window, the code in the layer is ran. Data in layers are **INDEPDENT** from eachother!
-
-## Extension
-
-> Simplification of opengl and also helpful utilities
-
-- **AssetPool(Abstract)** : A hashmap that keeps track of certain instances of classes under extensions.
-
-### Shaders
-
-- **VertexPipelineShader** : Shader for rendering vertices to the window.
-- **ComputeShder** : Shader for sending and recieving data computed in parallel from the GPU.
-
-### Primitives
-
-- **Texture** : a 2D buffer object for GPU computations.
-
-#### GLObjects
-
-- **VAO** : Vertex array object
-- **VBO** : Vertex buffer object
-- **EBO** : Element buffer object
-
-### Utils
-
-#### Cameras
-
-- **PerspectiveCamera** - a perspective camera class
-
-# Production CheckList
-
-- [x] Release & Debug Configurations
-- [x] MSVC Support
-- [ ] g++ support
-
-- [x] Windows Support
-- [ ] Linux Support
-
-- [ ] Importing Third Party Libraries
-  - [x] glad
-  - [x] glfw
-  - [x] imgui
-  - [x] spdlog
-  - [ ] stb_image
-- [x] Core
-  - [x] Application
-  - [x] Window
-  - [x] Layer & LayerStack & ImGuiLayer
-  - [x] OpenGLDebug
-  - [x] Log
-- [x] Extension
-
-  - [ ] Primitives
-    - [x] VertexPipeline
-    - [ ] SSBO
-    - [ ] Texture
-  - [x] Shaders
-    - [x] Shader (Base Class)
-    - [x] VertexPipelineShader
-    - [x] ComputeShader
-  - [x] AssetPool
-
-# TODO
-
-- [ ] SSBO
-- [ ] Test ComputeShaders
+- **Highest Speed** - Defines the highest speed for reaching the

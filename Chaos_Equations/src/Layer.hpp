@@ -65,13 +65,14 @@ public:
 			settings->simulationFlags->restart = false;
 		}
 
-		camera->onUpdate(ts, Extension::Cameras::PerspectiveCameraOptions::ROTATE_USING_CAMERA_TARGET);
+		if (!Application::get().getWindow().getProps().isMinimized()) {
+			camera->onUpdate(ts, Extension::Cameras::PerspectiveCameraOptions::ROTATE_USING_CAMERA_TARGET);
 
-		simulator->renderer->render(ts);
-		if (!settings->simulationFlags->stop) {
-			simulator->computer->nextGen(ts);
+			simulator->renderer->render(ts);
+			if (!settings->simulationFlags->stop) {
+				simulator->computer->nextGen(ts);
+			}
 		}
-
 	}
 	virtual void onImguiUpdate(const GLCore::TimeStep &ts) override
 	{

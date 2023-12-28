@@ -14,6 +14,7 @@ namespace GLCore {
 		glm::vec4 backgroundColor = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		bool enableVsync = true;
 		bool maximized = false;
+		bool minimized = false;
 
 		WindowProps() = default;
 		WindowProps(std::string name, int width = 1280, int height = 720, const glm::vec4& backgroundColor = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
@@ -22,6 +23,9 @@ namespace GLCore {
 		inline int getHeight() const { return this->dimensions.y; }
 		inline int getPosX() const { return this->position.x; }
 		inline int getPosY() const { return this->position.y; }
+
+		inline bool isMaximized() { return this->maximized; }
+		inline bool isMinimized() { return this->minimized; }
 
 		//Window callbacks already supplied by ImGui
 		inline float getMousePosX() const { return ImGui::GetIO().MousePos.x; }
@@ -34,6 +38,7 @@ namespace GLCore {
 
 		inline void disableVsync() { enableVsync = false; }
 		inline void maximize() { maximized = true; }
+		inline void minimize() { minimized = true; }
 	};
 
 }

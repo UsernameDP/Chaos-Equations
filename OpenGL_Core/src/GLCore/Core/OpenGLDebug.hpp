@@ -17,5 +17,4 @@ namespace GLCore {
         GLsizei length,
         const GLchar* message,
         const void* userParam);
-
 }

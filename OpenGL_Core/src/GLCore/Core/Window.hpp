@@ -29,5 +29,7 @@ namespace GLCore {
 		static void window_pos_callback(GLFWwindow* window, int xpos, int ypos);
 		static void glfw_error_callback(int error, const char* description);
 		static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+		static void window_iconify_callback(GLFWwindow* window, int iconified); //window minimized callback
+		static void window_maximize_callback(GLFWwindow* window, int maximized);
 	};
 }

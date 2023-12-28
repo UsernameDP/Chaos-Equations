@@ -5,11 +5,11 @@ class Settings {
 	struct SimulationSettings {
 		int numberOfParticles = 100;
 		glm::vec3 spawnPoint = glm::vec3(0.0f, 0.0f, 0.0f);
-		float maxDisplacement = 0.001f; //displacement from center
+		float maxDisplacement = 0.1f; //displacement from center
 
 		float higestSpeed = 10.0f;
-		glm::vec3 lowestSpeedColor = glm::vec3(0.0f, 0.0f, 0.0f);
-		glm::vec3 highestSpeedColor = glm::vec3(1.0f, 1.0f, 1.0f);
+		glm::vec3 lowestSpeedColor = glm::vec3(1.0f, 1.0f, 1.0f);
+		glm::vec3 highestSpeedColor = glm::vec3(1.0f, 0.0f, 0.0f);
 
 		static const size_t nextGenFunctionDefinition_Size = 10000;
 		char nextGenFunctionDefinition[nextGenFunctionDefinition_Size] =

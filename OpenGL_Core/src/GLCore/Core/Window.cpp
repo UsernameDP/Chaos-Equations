@@ -51,6 +51,20 @@ namespace GLCore
 		Window::instance->props.scroll.y += yoffset;
 	}
 
+	void Window::window_iconify_callback(GLFWwindow* window, int iconified) {
+		
+		if (iconified)
+			Window::instance->props.minimized = true;
+		else
+			Window::instance->props.minimized = false;
+	}
+	void Window::window_maximize_callback(GLFWwindow* window, int maximized) {
+		if (maximized)
+			Window::instance->props.maximized = true;
+		else
+			Window::instance->props.maximized = false;
+	}
+
 	Window* Window::instance = nullptr;
 
 	Window::Window(const WindowProps& props){
@@ -84,6 +98,8 @@ namespace GLCore
 			glfwSetWindowPos(GLFWWindow, this->props.getPosX(), this->props.getPosY());
 			glfwSetWindowPosCallback(GLFWWindow, Window::window_pos_callback);
 			glfwSetScrollCallback(GLFWWindow, Window::scroll_callback);
+			glfwSetWindowIconifyCallback(GLFWWindow, Window::window_iconify_callback);
+			glfwSetWindowMaximizeCallback(GLFWWindow, Window::window_maximize_callback);
 		}
 		else {
 			LOG_ERROR("A Window instance already exists");
