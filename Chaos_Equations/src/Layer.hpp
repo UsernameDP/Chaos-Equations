@@ -2,6 +2,7 @@
 #include "GLCore/Core/Core.hpp"
 #include "GLCore/Extension/Extension.hpp"
 using namespace GLCore;
+using namespace GLCore::Extension;
 
 #include "Settings.hpp"
 #include "GUI.hpp"
@@ -10,7 +11,7 @@ using namespace GLCore;
 class ChaosEquationsLayer : public Layer
 {
 private:
-	std::shared_ptr<Extension::Cameras::PerspectiveCamera> camera = nullptr;
+	std::shared_ptr<Cameras::PerspectiveCamera> camera = nullptr;
 	std::shared_ptr<Settings> settings = nullptr;
 	std::unique_ptr<GUI> gui = nullptr;
 	std::unique_ptr<Simulator> simulator = nullptr;
@@ -45,7 +46,7 @@ public:
 		cameraProps.enableFOVWithScroll();
 		cameraProps.enableMoveRadiusWithKeys();
 		cameraProps.setCameraMovementSpeedFactor(10.0);
-		camera = std::make_shared<Extension::Cameras::PerspectiveCamera>(cameraProps);
+		camera = std::make_shared<Cameras::PerspectiveCamera>(cameraProps);
 
 		gui = std::make_unique<GUI>(camera, settings);
 		simulator = std::make_unique<Simulator>(camera, settings);
@@ -59,6 +60,7 @@ public:
 	virtual void onUpdate(const GLCore::TimeStep &ts) override
 	{
 		if (settings->simulationFlags->restart) {
+			settings->simulationSettings->trailSize = settings->simulationSettings->tempTrailSize; //updating only once restart
 			simulator->computer->initGen();
 			simulator->renderer->restart();
 			
@@ -66,7 +68,7 @@ public:
 		}
 
 		if (!Application::get().getWindow().getProps().isMinimized()) {
-			camera->onUpdate(ts, Extension::Cameras::PerspectiveCameraOptions::ROTATE_USING_CAMERA_TARGET);
+			camera->onUpdate(ts, Cameras::PerspectiveCameraOptions::ROTATE_USING_CAMERA_TARGET);
 
 			simulator->renderer->render(ts);
 			if (!settings->simulationFlags->stop) {

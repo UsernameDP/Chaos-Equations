@@ -4,13 +4,21 @@ layout(local_size_x = 1) in;
 struct Particle {
 	vec4 pos;
 	vec4 color;
-	vec4 history[249]; 
+};
+
+struct History {
+	vec4 pos;
 };
 
 layout(std430, binding = 0) buffer ParticlesBuffer {
 	Particle[] particles;
 };
 
+layout(std430, binding = 1) buffer HistoryBuffer {
+	History[] history;
+};
+
+uniform uint trailSize;
 uniform float highestSpeed;
 uniform vec3 lowestSpeedColor;
 uniform vec3 highestSpeedColor;
@@ -22,17 +30,16 @@ ${nextGenFunction}
 
 void main(){
 	uint index = gl_GlobalInvocationID.x;
+	uint historyIndex = index * trailSize;
 	vec4 prevPos = particles[index].pos;
 	vec4 newPos = nextGen(prevPos);
 
-	int historyLength = particles[index].history.length();
-
 	//shift history down
-	for(int i = 0 ; i < historyLength - 1; i++){
-		particles[index].history[i] = particles[index].history[i + 1]; 
+	for(int i = 0 ; i < trailSize - 1; i++){
+		history[historyIndex + i].pos = history[historyIndex + i + 1].pos; 
 	}
 	
-	particles[index].history[historyLength - 1] = prevPos;
+	history[historyIndex + trailSize - 1].pos = newPos; //this way, newPos is included in the drawing of the trails
 	particles[index].pos = newPos;
 
 	//New Color

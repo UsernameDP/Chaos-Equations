@@ -13,15 +13,11 @@ public:
 	bool currentESC = false;
 	bool prevESC = false;
 
-	std::stringstream consoleOutputs;
 
 	GUI(std::shared_ptr<Extension::Cameras::PerspectiveCamera> camera, std::shared_ptr<Settings> settings)
 	{
 		this->settings = settings;
 		this->camera = camera;
-
-		std::streambuf *oldStdout = std::cout.rdbuf();
-		std::cout.rdbuf(consoleOutputs.rdbuf());
 	}
 
 private:
@@ -75,6 +71,9 @@ private:
 			{
 				if (ImGui::InputInt("Number of Particles", &settings->simulationSettings->numberOfParticles, 10, 100, ImGuiInputTextFlags_EnterReturnsTrue))
 				{
+					settings->simulationFlags->restart = true;
+				}
+				if (ImGui::InputInt("Trail Size/Length", &settings->simulationSettings->tempTrailSize, 1, 10, ImGuiInputTextFlags_EnterReturnsTrue)) {
 					settings->simulationFlags->restart = true;
 				}
 				if (ImGui::InputFloat3("Spawn Point", settings->simulationSettings->spawnPoint.data.data, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))

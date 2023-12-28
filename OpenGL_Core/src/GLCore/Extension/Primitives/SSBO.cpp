@@ -26,4 +26,10 @@ namespace GLCore::Extension::Primitives {
 	{
 		glDeleteBuffers(1, &ID);
 	}
+
+	void SSBO::reallocateData(const GLenum& DRAW_TYPE, const GLuint& allocationSize_bytes) {
+		bind();
+		glBufferData(GL_SHADER_STORAGE_BUFFER, allocationSize_bytes, nullptr, DRAW_TYPE);
+		unbind();
+	}
 }

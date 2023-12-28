@@ -4,14 +4,22 @@ layout(local_size_x = 1) in;
 struct Particle {
 	vec4 pos;
 	vec4 color;
-	vec4 history[249]; 
+};
+
+struct History {
+	vec4 pos;
 };
 
 
-layout(std430, binding = 0) buffer ParticlesBuffer {
+layout(std430, binding = 0) writeonly buffer ParticlesBuffer {
 	Particle[] particles;
 };
 
+layout(std430, binding = 1) writeonly buffer HistoryBuffer {
+	History[] history;
+};
+
+uniform uint trailSize;
 uniform vec3 spawnPoint;
 uniform float maxDisplacement;
 
@@ -26,33 +34,23 @@ vec3 randomPos(vec2 st) {
         mod(sin(dot(st, vec2(56.789, 21.987))) * 32109.8765, 1.0)
     );
 }
-vec3 randomColor(vec2 st) {
-    return vec3(fract(sin(dot(st, vec2(12.9898, 78.233))) * 43758.5453),
-                fract(sin(dot(st, vec2(21.345, 67.567))) * 87658.231),
-                fract(sin(dot(st, vec2(45.678, 93.123))) * 76545.987));
-}
 
 void main() {
-	/*
-	OPTIONS : 
-	- if you dislike same uniform values giving same points, you can use uTime
-	- if you don't like all (x,y,z) values being the same, then find an alternative
-	*/
 	uint index = gl_GlobalInvocationID.x;
+	uint historyIndex = index * trailSize;
 
-	vec2 randInput = vec2(spawnPoint.x, spawnPoint.y) + maxDisplacement * index;
+	vec2 randInput = vec2(spawnPoint.x + maxDisplacement, spawnPoint.y + maxDisplacement) + maxDisplacement * index;
 	
 	vec3 randomPosOutput = randomPos(randInput);
 	randomPosOutput.x = map(randomPosOutput.x, 0.0, 1.0, -maxDisplacement, maxDisplacement);
 	randomPosOutput.y = map(randomPosOutput.y, 0.0, 1.0, -maxDisplacement, maxDisplacement);
 	randomPosOutput.z = map(randomPosOutput.z, 0.0, 1.0, -maxDisplacement, maxDisplacement);
 
+	vec4 initPosition = vec4(randomPosOutput, 1.0);
 
-	particles[index].pos = vec4( randomPosOutput , 1.0);
-	//particles[index].color = vec4(randomColor(randInput), 1.0);
+	particles[index].pos = initPosition;
 	
-	for(int i = 0; i < particles[index].history.length() ; i++){
-		particles[index].history[i] = particles[index].pos;
+	for(int i = 0; i < trailSize ; i++){
+		history[historyIndex + i].pos = initPosition;
 	}
-
 }

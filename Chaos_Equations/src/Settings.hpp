@@ -1,9 +1,11 @@
 #pragma once
 
 class Settings {
-	
+public:
 	struct SimulationSettings {
 		int numberOfParticles = 100;
+		int trailSize = 100;
+		int tempTrailSize = trailSize;
 		glm::vec3 spawnPoint = glm::vec3(0.0f, 0.0f, 0.0f);
 		float maxDisplacement = 0.1f; //displacement from center
 

@@ -35,6 +35,7 @@ namespace GLCore::Extension::Primitives {
 			glBufferData(GL_SHADER_STORAGE_BUFFER, data->size() * sizeof(T), data->data(), DRAW_TYPE);
 			unbind();
 		}
+		void reallocateData(const GLenum& DRAW_TYPE, const GLuint& allocationSize_bytes);
 
 		template<typename T>
 		void readDataTo(std::vector<T>* dest) {

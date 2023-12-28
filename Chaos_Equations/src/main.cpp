@@ -17,7 +17,8 @@ public:
         Extension::AssetPool::setComputeShader(new Extension::Shaders::ComputeShader("InitGen", "initGen.comp"));
         Extension::AssetPool::setShader(new Extension::Shaders::VertexPipelineShader("Axis", "axis.vert", "axis.frag"));
         Extension::AssetPool::setShader(new Extension::Shaders::VertexPipelineShader("CameraTarget", "cameraTarget.vert", "cameraTarget.frag"));
-        Extension::AssetPool::setShader(new Extension::Shaders::VertexPipelineShader("Chaos", "chaos.vert", "chaos.geom", "chaos.frag"));
+        Extension::AssetPool::setShader(new Extension::Shaders::VertexPipelineShader("Particle", "particle.vert", "particle.geom", "particle.frag"));
+        Extension::AssetPool::setShader(new Extension::Shaders::VertexPipelineShader("History", "history.vert", "history.frag"));
 
         pushLayer(new ChaosEquationsLayer());
     }
