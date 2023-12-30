@@ -18,8 +18,12 @@ layout(std430, binding = 1) buffer HistoryBuffer {
 };
 
 uniform mat4 VP;
+uniform uint trailSize;
+
+out vec4 fragColor;
 
 void main(){
-	
-
+	uint particleIndex = uint(gl_VertexID / trailSize);
+	fragColor = particles[particleIndex].color;
+	gl_Position = history[gl_VertexID].pos;
 }

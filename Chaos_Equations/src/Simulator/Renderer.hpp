@@ -60,16 +60,6 @@ public:
 		particles_VAO = std::make_unique<Extension::Primitives::VAO>();
 
 		particlesHistory_shader = &Extension::AssetPool::getShader("History");
-		particlesHistory_VAO = std::make_unique<Extension::Primitives::VAO>();
-		particlesHistory_VAO->bind();
-		setIndicesSize = simSettings->numberOfParticles * simSettings->trailSize * 2; //*2 because we drawing with GL_LINES
-		std::vector<unsigned int> indices(setIndicesSize); 
-		for (unsigned int i = 0; i < simSettings->numberOfParticles * simSettings->trailSize; i++) {
-			unsigned int indiceIndex = i * 2;
-			indices[indiceIndex] = i;
-			indices[indiceIndex + 1] = i + 1;
-		}
-		particlesHistory_EBO = std::make_unique<Extension::Primitives::EBO>(GL_STATIC_DRAW, &indices);
 	}
 	
 	void restart() {
@@ -88,12 +78,6 @@ public:
 	void render(const TimeStep& ts) {
 		std::shared_ptr<Settings::SimulationSettings> simSettings = settings->simulationSettings;
 		/*Render Trails*/
-		particlesHistory_shader->use();
-		particlesHistory_shader->uploadMat4f("VP", camera->getViewProjection());
-		simulatorSharedObjects->particles_SSBO->bindAt(0);
-		simulatorSharedObjects->particlesHistory_SSBO->bindAt(1);
-		particlesHistory_VAO->bind();
-		glDrawElements(GL_LINES, simSettings->numberOfParticles * simSettings->trailSize * 2, GL_UNSIGNED_INT, 0);
 
 		/*Render Particle*/
 		particles_shader->use();
